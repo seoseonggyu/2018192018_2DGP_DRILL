@@ -7,6 +7,7 @@ def handle_events():
     global dir
     global dir2
     global way
+    global frame
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
