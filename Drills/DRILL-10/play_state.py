@@ -54,7 +54,7 @@ def handle_events():
                 game_framework.quit()
             elif event.key == SDLK_i:
                 game_framework.push_state(item_state)
-            elif event.key == SDLK_j:
+            elif event.key == SDLK_b:
                 game_framework.push_state(play_add)
 
 boy = None # c NULL
