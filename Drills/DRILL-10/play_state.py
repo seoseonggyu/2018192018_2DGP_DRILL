@@ -76,7 +76,7 @@ def exit():
 
 # 월드에 존재하는 객체들을 업데이트
 def update():
-    global  team
+    global team
 
     for boys in team[:]:
         boys.update()
