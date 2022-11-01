@@ -48,7 +48,7 @@ def update_world():
     global x, y
     global t
     global way
-    t += 0.002
+    t += 0.00004
     x = (1-t)*sx + t*ax
     y = (1-t)*sy + t*ay
 
