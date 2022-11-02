@@ -16,6 +16,7 @@ def handle_events():
                 game_framework.quit()
         else:
             boy.handle_event(event) # 소년한테 이벤트를 처리하도록 요청
+
 # 초기화
 def enter():
     global boy, grass
