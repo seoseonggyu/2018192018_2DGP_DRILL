@@ -19,7 +19,6 @@ key_event_table = {
 class IDLE:
     def enter(self, event): # 상태에 들어갈 때 행하는 액션
         print('enter idle')
-        self.count = 0
         self.dir = 0
         self.timer = 1000
         pass
@@ -106,17 +105,29 @@ class SLEEP:
         pass
 
 class AUTO_RUN:
+    @staticmethod
     def enter(self, event): # 상태에 들어갈 때 행하는 액션
+        if event == RU:
+            self.dir -= 1
+        if event == LU:
+            self.dir += 1
+
         if self.face_dir == 1:
             self.dir += 1
         if self.face_dir == -1:
             self.dir -= 1
 
-
+    @staticmethod
     def exit(self): # 상태를 나올 때 행하는 액션 , 고개 들기
         self.face_dir = self.dir
+        if self.face_dir == 1:
+            self.dir =0
+        if self.face_dir == -1:
+            self.dir =0
+
         pass
 
+    @staticmethod
     def do(self): # 상태에 있을 때 지속적으로 행하는 행위, 숨쉬기
         self.frame = (self.frame + 1) % 8
 
@@ -129,11 +140,12 @@ class AUTO_RUN:
         pass
 
     # 외부에서 전달되는 self
+    @staticmethod
     def draw(self):
         if self.dir == -1:
-            self.image.clip_draw(self.frame * 100, 0, 100, 100, self.x, self.y)
+            self.image.clip_draw(self.frame * 100, 0, 100, 100, self.x, self.y + 25, 200, 200)
         elif self.dir == 1:
-            self.image.clip_draw(self.frame * 100, 100, 100, 100, self.x, self.y)
+            self.image.clip_draw(self.frame * 100, 100, 100, 100, self.x, self.y + 25, 200, 200)
         pass
 
 
@@ -142,7 +154,7 @@ next_stage = {
     IDLE:  {RU: RUN,  LU: RUN,  RD: RUN,  LD: RUN, TIMER: SLEEP, AUTO: AUTO_RUN},
     RUN:   {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, AUTO: AUTO_RUN},
     SLEEP: {RD: RUN,  LD: RUN,  RU: RUN,  LU: RUN, TIMER: SLEEP},
-    AUTO_RUN: {RU: AUTO, LU: AUTO, RD: RUN, LD: RUN, AUTO: IDLE}
+    AUTO_RUN: {RU: AUTO_RUN, LU: AUTO_RUN, RD: RUN, LD: RUN, AUTO: IDLE}
 }
 
 class Boy:
