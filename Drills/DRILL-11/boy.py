@@ -68,6 +68,7 @@ class RUN:
         self.frame = (self.frame + 1) % 8
         # x 좌표 변경, 달리기
         self.x += self.dir
+        print("self.dir == ", self.dir)
         # clamp : 범위 제한
         self.x = clamp(0, self.x, 800)
         pass
