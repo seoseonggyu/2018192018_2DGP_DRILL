@@ -1,17 +1,24 @@
-# layer 0: Background Objects
-# layer 1: Foreground Objects
+# object[0] : 바닥 계층
+# object[1] : 상위 계층
 objects = [[], []]
 
-def add_object(o, depth):
+
+
+def add_object(o,depth):
     objects[depth].append(o)
 
-def add_objects(ol, depth):
-    objects[depth] += ol
+def remove_object(o):
+    for layer in objects:
+        if o in layer:
+            layer.remove(o)
+            del o
+            break
 
 def all_objects():
     for layer in objects:
         for o in layer:
-            yield o
+            yield o # 제너레이터, 모든 객체들을 하나씩 넘겨준다.
+
 def clear():
     for o in all_objects():
         del o
@@ -19,11 +26,5 @@ def clear():
         layer.clear()
 
 
-
-def remove_object(o):
-    for layer in objects:
-        if o in layer:
-            layer.remove(o)
-            del o
-            return
-    raise ValueError('Trying destroy non existing object')
+    # objects.remove(o) # 리스트에 빼주는것
+    # del o # 메모리에서 날린다

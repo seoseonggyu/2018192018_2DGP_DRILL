@@ -1,9 +1,12 @@
 from pico2d import *
+
 from ball import Ball
+import game_world
+
 
 #1 : 이벤트 정의
 RD, LD, RU, LU, TIMER, SPACE = range(6)
-event_name = ['RD', 'LD', 'RU', 'LU', 'TIMER', 'SPACE']
+event_name = ['RD', 'LD', 'RU', 'LU', 'TIMER', 'SPACE'] # 이벤트 숫자로부터 문자열 정보
 
 key_event_table = {
     (SDL_KEYDOWN, SDLK_SPACE): SPACE,
@@ -34,12 +37,6 @@ class IDLE:
         self.timer -= 1
         if self.timer == 0:
             self.add_event(TIMER)
-
-        if len(self.balls) != 0:
-            for i, bxy in enumerate(self.balls):
-                if bxy.x < 25 or bxy.x >= 800 - 25:
-                    self.balls.remove(bxy)
-
         for ball in self.balls[:]:
             ball.update()
 
@@ -48,7 +45,6 @@ class IDLE:
     def draw(self):
         if self.face_dir == 1:
             self.image.clip_draw(self.frame * 100, 300, 100, 100, self.x, self.y)
-
             for ball in self.balls[:]:
                 ball.draw()
         else:
@@ -79,13 +75,6 @@ class RUN:
         self.frame = (self.frame + 1) % 8
         self.x += self.dir
         self.x = clamp(0, self.x, 800)
-
-
-        if len(self.balls) != 0:
-            for i, bxy in enumerate(self.balls):
-                if bxy.x < 25 or bxy.x >= 800 - 25:
-                    self.balls.remove(bxy)
-
         for ball in self.balls[:]:
             ball.update()
 
@@ -99,13 +88,13 @@ class RUN:
             for ball in self.balls[:]:
                 ball.draw()
 
-
 class SLEEP:
+
     def enter(self, event):
         print('ENTER SLEEP')
         self.frame = 0
 
-    def exit(self):
+    def exit(self, event):
         pass
 
     def do(self):
@@ -123,30 +112,25 @@ class SLEEP:
 #3. 상태 변환 구현
 
 next_state = {
-    IDLE:  {RU: RUN,  LU: RUN,  RD: RUN,  LD: RUN, TIMER: SLEEP, SPACE: IDLE},
+    IDLE:  {RU: RUN,  LU: RUN,  RD: RUN,  LD: RUN,  TIMER: SLEEP, SPACE: IDLE},
     RUN:   {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, SPACE: RUN},
-    SLEEP: {RU: RUN, LU: RUN, RD: RUN, LD: RUN, SPACE: IDLE}
+    SLEEP: {RU: RUN,  LU: RUN,  RD: RUN,  LD: RUN,  SPACE: SLEEP}
 }
-
-
-
 
 class Boy:
 
     def __init__(self):
-        self.x, self.y = 800 // 2, 40
+        self.x, self.y = 800 // 2, 50
         self.frame = 0
         self.dir, self.face_dir = 0, 1
         self.image = load_image('animation_sheet.png')
+        self.balls = []
 
         self.timer = 100
 
         self.event_que = []
         self.cur_state = IDLE
         self.cur_state.enter(self, None)
-
-        self.balls = [Ball(0,0,0)]
-
 
     def update(self):
         self.cur_state.do(self)
@@ -157,9 +141,8 @@ class Boy:
             try:
                 self.cur_state = next_state[self.cur_state][event]
             except KeyError:
-                print(f'ERROR: State {self.cur_state.__name__} Event {event_name[event]}')
-
-            # self.cur_state = next_state[self.cur_state][event]
+                # 에러가 발생했으면, 그때 상태와 이벤트를 출력해본다.
+                print(self.cur_state, event_name[event])
             self.cur_state.enter(self, event)
 
     def draw(self):
@@ -176,6 +159,7 @@ class Boy:
             self.add_event(key_event)
 
     def fire_ball(self):
-        self.balls.append(Ball(self.x, self.y, self.face_dir))
-        print('FIRE BALL : ', self.balls)
-
+        print("FIRE BALL")
+        # 볼을 생성
+        balls = Ball(self.x, self.y, self.face_dir * 2)
+        game_world.add_object(balls, 1)
