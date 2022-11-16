@@ -104,8 +104,9 @@ class SLEEP:
 
     def draw(self):
         if self.face_dir == -1:
-            self.image.clip_composite_draw(int(self.frame) * 100, 200, 100, 100,
-                                          -3.141592 / 2, '', self.x + 25, self.y - 25, 100, 100)
+            if self.face_dir == -1:
+                self.image.clip_composite_draw(int(self.frame) * 100, 200, 100, 100,
+                                               -3.141592 / 2, '', self.x + 25, self.y - 25, 100, 100)
         else:
             self.image.clip_composite_draw(int(self.frame) * 100 * 100, 300, 100, 100,
                                           3.141592 / 2, '', self.x - 25, self.y - 25, 100, 100)
